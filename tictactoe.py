@@ -212,7 +212,7 @@ def minimax(board):
     for i in possible_moves:
         result_state = result(board, i)
         next_turn = True if player(result_state) == "X" else False 
-        current_util = actual_minimax(result_state, next_turn)
+        current_util = actual_minimax(result_state, next_turn, -m.inf, m.inf)
         utility_move.update({current_util:i})
     
     list_form = [a for a in utility_move.keys()]
@@ -224,7 +224,7 @@ def minimax(board):
         return utility_move[min(tuple(list_form))]
 
 
-def actual_minimax(board, max_player):
+def actual_minimax(board, max_player, alpha, beta):
     """
     different from the previous minimax function - this one actually does the evaluations of each state through recursion
     """
@@ -238,15 +238,21 @@ def actual_minimax(board, max_player):
     if max_player:
         maxEval = -m.inf
         for i in possible_states:
-            eval = actual_minimax(i, False)
+            eval = actual_minimax(i, False, alpha, beta)
             maxEval = max(maxEval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
         return maxEval
     
     else:
         minEval = +m.inf
         for i in possible_states:
-            eval = actual_minimax(i, True)
+            eval = actual_minimax(i, True, alpha, beta)
             minEval = min(minEval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
         return minEval
 
 
